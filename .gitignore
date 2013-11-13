@@ -1,0 +1,10 @@
+venv/
+*.pyc
+*.db
+*.log
+fabfile.py
+*.sqlite
+static/.webassets-cache/
+static/gen/*
+dump*
+.env_dev
