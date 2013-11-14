@@ -50,7 +50,10 @@ COUNTRIES = {
 }
 
 map = L.mapbox.map("map", "vied12.g97iffb2").setView([40, -74.50], 2)
+svg = d3.select(map.getPanes().overlayPane).append("svg")
+g   = svg.append("g").attr("class", "leaflet-zoom-hide")
 
+# add marker
 for country, obj of COUNTRIES
 	L.mapbox.markerLayer(
 		type: "Feature"
@@ -64,16 +67,57 @@ for country, obj of COUNTRIES
 			"marker-color": "#246CA6"
 	).addTo map
 
-$.get "static/data/data.json", (data) ->
-	MAX_OCC = 0
-	for country, relations of data
+d3.json "static/data/data.json", (countries) ->
+	x = (d) -> return d.x
+	y = (d) -> return d.y
+	line = d3.svg.line().x(x).y(y).interpolate("cardinal");
+	lines = []
+	for country, relations of countries
 		for other_country, occ of relations
-			if occ > MAX_OCC
-				MAX_OCC = occ
+			a = map.latLngToLayerPoint(new L.LatLng(COUNTRIES[country].geo[1], COUNTRIES[country].geo[0]))
+			b = map.latLngToLayerPoint(new L.LatLng(COUNTRIES[other_country].geo[1], COUNTRIES[other_country].geo[0]))
+			m = new L.Point(a.x+(b.x-a.x)/2, a.y+(b.y-a.y)/2-50)
+			lines.push
+				points: [a,m,b]
+				occ   : occ
+	
+	curves = g.selectAll("path.curve").data(lines).enter()
+		.append("path")
+		.attr("class", "curve")
+		.attr('stroke', 'green')
+		.attr('stroke-width', 1)
+		.attr('fill', 'none')
+		.attr('d', (d) -> line(d.points))
 
-	for country, relations of data
-		for other_country, occ of relations
-			# console.log country, other_country, occ
-			pointA = new L.LatLng(COUNTRIES[country].geo[1],       COUNTRIES[country].geo[0])
-			pointB = new L.LatLng(COUNTRIES[other_country].geo[1], COUNTRIES[other_country].geo[0])
-			polyline = L.polyline([pointA, pointB], {color: '#008506', opacity:occ/MAX_OCC*.6,weight:occ*0.05}).addTo(map)
+	topLeft     = [0,0]
+	bottomRight = [1500,800]
+	svg.attr("width", bottomRight[0] - topLeft[0])
+		.attr("height", bottomRight[1] - topLeft[1])
+		.style("left", topLeft[0] + "px")
+		.style("top", topLeft[1] + "px")
+	g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+	# lines   = []
+	# MAX_OCC = 0
+	# for country, relations of countries
+	# 	for other_country, occ of relations
+	# 		if occ > MAX_OCC
+	# 			MAX_OCC = occ
+	# 		lines.push
+	# 			country1_geo : COUNTRIES[country].geo
+	# 			country1     : country
+	# 			country2     : other_country
+	# 			country2_geo : COUNTRIES[other_country].geo
+	# 			occ          : occ
+	# for country, relations of countries
+	# 	for other_country, occ of relations
+	# 		pointA = map.latLngToLayerPoint(new L.LatLng(COUNTRIES[country].geo[1],       COUNTRIES[country].geo[0]))
+	# 		pointB = map.latLngToLayerPoint(new L.LatLng(COUNTRIES[other_country].geo[1], COUNTRIES[other_country].geo[0]))
+	# 		pointM = new L.Point(pointA.x+(pointB.x-pointA.x)/2, pointA.y+(pointB.y-pointA.y)/2-50)
+	# 		pointA = map.layerPointToLatLng(pointA)
+	# 		pointB = map.layerPointToLatLng(pointB)
+	# 		pointM = map.layerPointToLatLng(pointM)
+	# 		polyline = L.polyline([pointA, pointM, pointB], {smoothFactor:10, color: '#008506', opacity:occ/MAX_OCC*.6,weight:occ*0.05}).addTo(map)
+	# 		# break
+		# break
+
+
