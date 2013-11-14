@@ -16,7 +16,11 @@
 		<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js')  }}"></script>
 		<script type="text/javascript" src="{{ url_for('static', filename='js/mapbox.js')  }}"></script>
 		<script type="text/javascript" src="{{ url_for('static', filename='js/underscore.js')  }}"></script>
-		{% assets filters="coffeescript", output="gen/scripts.js", "coffee/scripts.coffee" %}
+		<script type="text/javascript" src="{{ url_for('static', filename='js/queue.js')  }}"></script>
+		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		{% assets filters="coffeescript", output="gen/scripts.js", 
+		"coffee/scripts.coffee" 
+		 %}
 			<script type="text/javascript" src="{{  ASSET_URL  }}"></script>
 		{% endassets %}
 	</body>

@@ -43,6 +43,11 @@ def index():
 	response = make_response(render_template('home.html'))
 	return response
 
+@app.route('/test')
+def test():
+	response = make_response(render_template('test.html'))
+	return response
+
 # -----------------------------------------------------------------------------
 #
 # Main
