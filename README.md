@@ -3,6 +3,8 @@ Wikileaks Secret TPP Agreement
 
 Nov 2013
 
+[![Screenshot](screenshot.png)](http://wikileaks.org/US-Australia-isolated-in-TPP.html)
+
 ## Installation
 
 **a. Requirements**
