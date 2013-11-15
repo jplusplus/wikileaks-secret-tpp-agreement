@@ -143,9 +143,15 @@ class Map
 
 	onMarkerClick : (e) =>
 		code = e.target.feature.properties.code
-		@current_country = code
+		if @current_country == code
+			@current_country = undefined
+		else
+			@current_country = code
+		@showCurves(@current_country)
+
+	showCurves: (country=undefined) =>
 		@curves
-			.attr('display', (d) => if d.from == code then "inline" else "none")
+			.attr('display', (d) => if not country? or d.from == country then "inline" else "none")
 			.attr 'stroke-width', (d) =>
 				@stroke_scale(d.data.occ)
 			.attr 'opacity', (d) =>
