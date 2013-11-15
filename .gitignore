@@ -8,3 +8,5 @@ static/.webassets-cache/
 static/gen/*
 dump*
 .env_dev
+*tar.gz
+build/

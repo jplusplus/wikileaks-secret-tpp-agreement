@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Encoding: utf-8
 # -----------------------------------------------------------------------------
-# Project : Broken Promises
+# Project : Popcorn
 # -----------------------------------------------------------------------------
 # Author : Edouard Richard                                  <edou4rd@gmail.com>
 # -----------------------------------------------------------------------------
@@ -10,20 +10,20 @@
 # Creation : 29-Oct-2013
 # Last mod : 30-Oct-2013
 # -----------------------------------------------------------------------------
-# This file is part of Broken Promises.
+# This file is part of Popcorn.
 # 
-#     Broken Promises is free software: you can redistribute it and/or modify
+#     Popcorn is free software: you can redistribute it and/or modify
 #     it under the terms of the GNU General Public License as published by
 #     the Free Software Foundation, either version 3 of the License, or
 #     (at your option) any later version.
 # 
-#     Broken Promises is distributed in the hope that it will be useful,
+#     Popcorn is distributed in the hope that it will be useful,
 #     but WITHOUT ANY WARRANTY; without even the implied warranty of
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #     GNU General Public License for more details.
 # 
 #     You should have received a copy of the GNU General Public License
-#     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
+#     along with Popcorn.  If not, see <http://www.gnu.org/licenses/>.
 
 from flask import Flask, render_template, request, send_file, \
 	send_from_directory, Response, abort, session, redirect, url_for, make_response
@@ -33,6 +33,7 @@ import os
 app = Flask(__name__)
 assets = Environment(app)
 app.config.from_pyfile('settings.py', silent=True)
+
 # -----------------------------------------------------------------------------
 #
 # Site pages
@@ -43,18 +44,21 @@ def index():
 	response = make_response(render_template('home.html'))
 	return response
 
-@app.route('/test')
-def test():
-	response = make_response(render_template('test.html'))
-	return response
-
 # -----------------------------------------------------------------------------
 #
 # Main
 #
 # -----------------------------------------------------------------------------
 if __name__ == '__main__':
-	import os
+	import sys
+	if len(sys.argv) > 1:
+		if sys.argv[1] == "build":
+			from flask_frozen import Freezer
+			freezer = Freezer(app).freeze()
+			import shutil
+			shutil.rmtree(os.path.join(os.path.dirname(__file__), "build", "static", ".webassets-cache"))
+			print "frozen!"
+			sys.exit()
 	app.run(
 		extra_files=[os.path.join(os.path.dirname(__file__), "settings.py")]
 	)
