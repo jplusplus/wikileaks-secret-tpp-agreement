@@ -81,6 +81,7 @@ class Map
 				center          : new L.LatLng(5,-150)
 				scrollWheelZoom : false
 		)
+		@map.addEventListener('click', @onMapClick)
 		# init d3 with leaflet
 		@svg = d3.select(@map.getPanes().overlayPane).append("svg")
 		@g   = @svg.append("g").attr("class", "leaflet-zoom-hide")
@@ -149,6 +150,11 @@ class Map
 			@current_country = code
 		@showCurves(@current_country)
 
+	onMapClick : (e) =>
+		if @current_country?
+			@current_country = undefined
+			@showCurves(@current_country)
+
 	showCurves: (country=undefined) =>
 		@curves
 			.attr('display', (d) => if not country? or d.from == country then "inline" else "none")
@@ -198,6 +204,7 @@ class Map
 		@curves = @g.selectAll("path.curve").data(@lines)
 		@curves.enter()
 			.append("path")
+			# .attr('display', (d) => if not country? or d.from == country then "inline" else "none")
 			.attr("class", "curve")
 			.attr 'stroke', (d) =>
 				c1 = @COUNTRIES[d.from]
