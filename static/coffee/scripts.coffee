@@ -204,7 +204,6 @@ class Map
 		@curves = @g.selectAll("path.curve").data(@lines)
 		@curves.enter()
 			.append("path")
-			# .attr('display', (d) => if not country? or d.from == country then "inline" else "none")
 			.attr("class", "curve")
 			.attr 'stroke', (d) =>
 				c1 = @COUNTRIES[d.from]
